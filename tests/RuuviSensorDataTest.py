@@ -1,6 +1,6 @@
 import unittest
 
-from RuuviSensorData import RuuviSensorData
+from ruuvi.RuuviSensorData import RuuviSensorData
 
 
 class RuuviSensorDataTest(unittest.TestCase):
