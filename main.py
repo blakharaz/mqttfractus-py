@@ -18,18 +18,12 @@ class Runner:
     def sigterm_handler(self, _signo, _stack_frame):
         self.quit_event.set()
 
-    def find_ruuvi_data(self, manufacturer_data: dict):
-        if manufacturer_data is None or len(manufacturer_data) == 0:
+    @staticmethod
+    def find_ruuvi_data(manufacturer_data: dict):
+        try:
+            return RuuviSensorData(manufacturer_data)
+        except RuuviSensorDataFormatException:
             return None
-
-        if 0x0499 in manufacturer_data:
-            data = manufacturer_data[0x0499]
-            try:
-                return RuuviSensorData(data)
-            except RuuviSensorDataFormatException:
-                return None
-
-        return None
 
     def detection_callback(self, device, advertisement_data):
         ruuvi_data = self.find_ruuvi_data(advertisement_data.manufacturer_data)
@@ -39,12 +33,11 @@ class Runner:
     async def run(self):
         scanner = BleakScanner()
         scanner.register_detection_callback(self.detection_callback)
-        await scanner.start()
 
         while not self.quit_event.is_set():
-            sleep(1)
-
-        await scanner.stop()
+            await scanner.start()
+            sleep(15)
+            await scanner.stop()
 
 
 runner = Runner()
