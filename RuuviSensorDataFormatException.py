@@ -1,0 +1,2 @@
+class RuuviSensorDataFormatException(Exception):
+    pass
