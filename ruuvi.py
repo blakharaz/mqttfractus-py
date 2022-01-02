@@ -16,6 +16,7 @@ class RuuviSensorData:
         data = bt_manufacturer_data[0x0499]
 
         if data[0] == 0x03:
+            # https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-3-rawv1
             if len(data) < 14:
                 raise RuuviSensorDataFormatException("Data must be at least 14 bytes")
 
@@ -26,6 +27,17 @@ class RuuviSensorData:
                 self.temperature = -(data[2] & 0b01111111) - data[3] / 100
             else:
                 self.temperature = data[2] + data[3] / 100
+        elif data[0] == 0x05:
+            # https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-5-rawv2
+            if len(data) != 24:
+                raise RuuviSensorDataFormatException("Data must be 24 bytes")
+            self.humidity = (data[3] * 256 + data[4]) * 0.0025
+            self.pressure = (data[5] * 256 + data[6]) + 50000
+            self.battery_voltage = ((data[13] * 256 + data[14]) >> 5) / 1000 + 1.6
+            if data[1] & 0b10000000:
+                self.temperature = (data[1] * 256 + data[2] - 65536) * 0.005
+            else:
+                self.temperature = (data[1] * 256 + data[2]) * 0.005
         else:
             raise RuuviSensorDataFormatException(f"Can't handle data format v{data[0]}")
 
