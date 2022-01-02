@@ -25,9 +25,9 @@ class RuuviSensorData:
             if data[2] & 0b10000000:
                 self.temperature = -(data[2] & 0b01111111) - data[3] / 100
             else:
-                self.temperature = data[2] - data[3] / 100
+                self.temperature = data[2] + data[3] / 100
         else:
-            raise RuuviSensorDataFormatException(f"Can't handle data format v{bt_manufacturer_data[0]}")
+            raise RuuviSensorDataFormatException(f"Can't handle data format v{data[0]}")
 
 
 class RuuviMqttConnection:
