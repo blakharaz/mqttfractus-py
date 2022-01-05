@@ -50,7 +50,7 @@ class RuuviMqttConnection:
     def send(self, name: str, data: RuuviSensorData):
         sanitized_name = name.replace(':', '_')
 
-        self.mqtt_client.publish(topic=f"ruuvi/{sanitized_name}/temperature", payload=f"{data.temperature:.1f}")
-        self.mqtt_client.publish(topic=f"ruuvi/{sanitized_name}/pressure", payload=f"{data.pressure:.1f}")
-        self.mqtt_client.publish(topic=f"ruuvi/{sanitized_name}/humidity", payload=f"{data.humidity:.1f}")
+        self.mqtt_client.publish(topic=f"ruuvi/{sanitized_name}/temperature", payload=f"{data.temperature:.2f}")
+        self.mqtt_client.publish(topic=f"ruuvi/{sanitized_name}/pressure", payload=f"{data.pressure:.2f}")
+        self.mqtt_client.publish(topic=f"ruuvi/{sanitized_name}/humidity", payload=f"{data.humidity:.2f}")
         self.mqtt_client.loop_write(3)
